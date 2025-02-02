@@ -23,22 +23,45 @@
         <div class="col-md-5 mx-auto">
             <div class="card h-100 shadow-sm">
                 <div class="position-relative">
-                    @if($sale->images->isNotEmpty())
+                @if($sale->images->isNotEmpty() && $sale->images->count() == 1)
                     <img src="{{ asset('storage/' . $sale->images->first()->route) }}"
                         class="card-img-top"
-                        style="height: 400px; object-fit: cover;"
+                        style="height: 400px; object-fit: contain;"
                         alt="{{ $sale->product }}">
+                    @elseif($sale->images->count() > 1)
+                    <div id="carousel-{{ $sale->id }}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
+                        <div class="carousel-inner">
+                            @foreach($sale->images as $image)
+                            <div class="carousel-item @if ($loop->first) active @endif">
+                                <img src="{{ asset("storage/{$image->route}") }}"
+                                    class="d-block w-100"
+                                    style="height: 400px; object-fit: contain;"
+                                    alt="{{ $sale->product }}">
+                            </div>
+                            @endforeach
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ $sale->id }}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color: black;"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ $sale->id }}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true" style="background-color: black;"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
                     @else
                     <img src="{{ asset('images/basica.png') }}"
                         class="card-img-top"
-                        style="height: 400px; object-fit: cover;">
+                        style="height: 400px; object-fit: contain;">
                     @endif
+
+
 
 
 
                     @if($sale->isSold)
                     <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
-                        <span class="badge bg-danger fs-1 p-10" style="transform: rotate(-45deg);">SOLD</span>
+                    <span class="badge bg-danger fs-3 p-2 w-100" style="transform: rotate(-45deg);">SOLD</span>
                     </div>
                     @endif
                 </div>
@@ -57,6 +80,12 @@
                         <button type="submit" class="btn btn-outline-danger w-100"
                             onclick="return confirm('¿Are you sure you want to delete this product?')">
                             <i class="fas fa-trash"></i> Delete Product
+                        </button>
+                    </form>
+                    <form action="{{ route('sales.edit', $sale->id) }}" method="GET">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-info w-100">
+                            <i class="fas fa-trash"></i> Edit Product
                         </button>
                     </form>
                 </div>

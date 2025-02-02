@@ -3,12 +3,14 @@
 @section('content')
 <div class="container">
     <div class="d-flex gap-3 align-items-center mb-4">
+    @if(Auth::user() != null)
         <a href="{{ route('sales.create') }}" class="btn btn-info">
             <i class="fas fa-plus"></i> New Product
         </a>
         <a href="{{ route('sales.user', ['user' => Auth::id()]) }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> My Products
         </a>
+        @endif
     </div>
 
     @if(session('success'))
@@ -32,7 +34,7 @@
                     @if($sale->images->isNotEmpty() && $sale->images->count() == 1)
                     <img src="{{ asset('storage/' . $sale->images->first()->route) }}"
                         class="card-img-top"
-                        style="height: 400px; object-fit: cover;"
+                        style="height: 400px; object-fit: contain;"
                         alt="{{ $sale->product }}">
                     @elseif($sale->images->count() > 1)
                     <div id="carousel-{{ $sale->id }}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
@@ -58,21 +60,21 @@
                     @else
                     <img src="{{ asset('images/basica.png') }}"
                         class="card-img-top"
-                        style="height: 400px; object-fit: cover;">
+                        style="height: 400px; object-fit: contain;">
                     @endif
 
 
 
                     @if($sale->isSold)
                     <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
-                        <span class="badge bg-danger fs-1 p-10" style="transform: rotate(-45deg);">SOLD</span>
+                        <span class="badge bg-danger fs-3 p-2 w-100" style="transform: rotate(-45deg);">SOLD</span>
                     </div>
                     @endif
                 </div>
                 <div class="card-body">
                     <h5 class="card-title text-truncate">{{ $sale->product }}</h5>
                     <p class="card-text text-truncate">{{ Str::limit($sale->description, 50) }}</p>
-                    <h6 class="text-info">Price: {{ number_format($sale->price, 0, ',', '.') }}€</h6>
+                    <h6 class="text-info">Price: {{ number_format($sale->price, 2, ',', '.') }}€</h6>
                     <span class=""> Category: {{ $sale->category->name }}</span> <br>
                     <span class=""> Seller: {{ $sale->user->name }}</span>
 
@@ -100,6 +102,12 @@
                         <button type="submit" class="btn btn-danger w-100"
                             onclick="return confirm('¿Are you sure you want to delete this product?')">
                             <i class="fas fa-trash"></i> Delete Product
+                        </button>
+                    </form>
+                    <form action="{{ route('sales.edit', $sale->id) }}" method="GET">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-info w-100">
+                            <i class="fas fa-trash"></i> Edit Product
                         </button>
                     </form>
                     @endif

@@ -144,7 +144,7 @@ class SaleController extends Controller
     public function update(Request $request, $id)
     {
         $sale = Sale::findOrFail($id);
-        $maxImages = Setting::where('name', 'maxImages')->value('maxImages') ?? 5;
+        $maxImages = Setting::where('name', 'maxImages')->value('maxImages') ?? 4;
         $request->validate([
             'product' => 'required|string|max:255',
             'description' => 'required|string',
@@ -152,6 +152,7 @@ class SaleController extends Controller
             'category_id' => 'required|exists:categories,id',
             'images' => "array|max:$maxImages",
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'isSold' => 'boolean',
         ]);
 
         $sale->update([
@@ -159,17 +160,20 @@ class SaleController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'category_id' => $request->category_id,
+            'isSold' => $request->isSold,
         ]);
+
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('images', 'public');
-                // Image::create([
-                //     'sale_id' => $sale->id,
-                //     'route' => $path,
-                // ]);
+                Image::create([
+                    'sale_id' => $sale->id,
+                    'route' => $path,
+                ]);
             }
         }
+       
 
         return redirect()->route('sales.index')->with('success', 'Product updated.');
     }
