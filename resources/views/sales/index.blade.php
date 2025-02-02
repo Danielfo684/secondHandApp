@@ -28,6 +28,7 @@
     @endif
     <div class="row g-2">
         @foreach($sales as $sale)
+        @if(!$sale->isSold)
         <div class="col-md-5 mx-auto">
             <div class="card h-100 shadow-sm">
                 <div class="position-relative" style="height: 400px;">
@@ -117,6 +118,7 @@
             </div>
         </div>
         @include('sales.show-modal', ['sale' => $sale])
+        @endif
         @endforeach
     </div>
 </div>

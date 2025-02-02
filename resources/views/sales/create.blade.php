@@ -6,7 +6,7 @@
         <div class="col-md-8">
             <div class="card shadow-lg">
                 <div class="card-header bg-dark text-light">
-                    <h4 class="card-title mb-0 text-center">What do you want to sale?</h4>
+                    <h4 class="card-title mb-0 text-center">What do you want to sell?</h4>
                 </div>
                 <div class="card-body">
                     @if ($errors->any())
@@ -96,10 +96,10 @@
 
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save"></i> Publicar Anuncio
+                                <i class="fas fa-save"></i> Post ad
                             </button>
                             <a href="{{ route('sales.index') }}" class="btn btn-danger">
-                                Cancelar
+                                Cancel
                             </a>
                         </div>
                     </form>

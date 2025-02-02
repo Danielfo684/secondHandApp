@@ -8,7 +8,7 @@
             <i class="fas fa-plus"></i> New Product
         </a>
         <a href="{{ route('sales.index') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Search products
+            <i class="fas fa-plus"></i> Show products
         </a>
     </div>
 

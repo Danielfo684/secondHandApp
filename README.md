@@ -58,17 +58,15 @@ https://danielfo684.github.io/Portfolio/
 
 ## Screenshots
 
-### User List
+### Main Ad
 ![User List](/documentation/1.png)
 
-### User Creation
+### Edit publication
 ![User Creation](/documentation/2.png)
 
-### User Editing
+### More info section
 ![User Editing](/documentation/3.png)
 
-### Middleware
+### Different options for each product
 ![Admin Panel](/documentation/4.png)
 
-### Migration
-![Admin Panel](/documentation/5.png)

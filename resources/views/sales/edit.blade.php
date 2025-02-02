@@ -6,7 +6,7 @@
         <div class="col-md-8">
             <div class="card shadow-lg">
                 <div class="card-header bg-dark text-light">
-                    <h4 class="card-title mb-0 text-center">What do you want to sale?</h4>
+                    <h4 class="card-title mb-0 text-center">Modify your product</h4>
                 </div>
                 <div class="card-body">
                     @if ($errors->any())
@@ -38,7 +38,7 @@
                             <div class="mb-3">
                                 <label for="isSold" class="form-label">Is Sold</label>
                                 <select class="form-select @error('isSold') is-invalid @enderror" id="isSold" name="isSold" required>
-                                    <option value="0" {{ old('isSold', $sale->isSold) == 0 ? 'selected' : '' }}>No</option>
+                                    <option value="0"  {{ old('isSold', $sale->isSold) == 0 ? 'selected' : '' }}>No</option>
                                     <option value="1" {{ old('isSold', $sale->isSold) == 1 ? 'selected' : '' }}>Yes</option>
                                 </select>
                                 @error('isSold')
