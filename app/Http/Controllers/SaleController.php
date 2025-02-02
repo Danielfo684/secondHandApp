@@ -22,27 +22,25 @@ class SaleController extends Controller
     public function index()
     {
         $query = Sale::with(['category', 'images', 'purchases']);
-        
-        if (!Auth::check()) {
-            $query->where('isSold', false);
-        } else {
-            $query->where(function($q) {
-                $q->where('isSold', false)
-                ->orWhere('user_id', Auth::id())
-                ->orWhereHas('purchases', function($q) {
-                    $q->where('user_id', Auth::id());
-                });
-            });
-        }
-        
+
         $sales = $query->latest()->get();
-        return view('sales.index', compact('sales'));
+        $user = Auth::user();
+
+        return view('sales.index', compact('sales', 'user'));
+    }
+
+    public function showUserSales($user)
+    {
+
+        $query = Sale::with(['category', 'images', 'purchases']);
+        $sales = $query->where('user_id', Auth::id())->latest()->get();
+        return view('sales.user', compact('sales'));
     }
 
     public function purchase($id)
     {
         $sale = Sale::findOrFail($id);
-        
+
         if ($sale->isSold) {
             return back()->with('error', 'Este producto ya ha sido vendido.');
         }
@@ -52,7 +50,7 @@ class SaleController extends Controller
         }
 
         $sale->update(['isSold' => true]);
-        
+
         Purchase::create([
             'sale_id' => $sale->id,
             'user_id' => Auth::id(),
@@ -60,13 +58,29 @@ class SaleController extends Controller
         ]);
 
         return redirect()->route('sales.show', $sale->id)
-                        ->with('success', 'Producto comprado correctamente');
+            ->with('success', 'Producto comprado correctamente');
     }
 
     public function create()
     {
         $categories = Category::all();
         return view('sales.create', compact('categories'));
+    }
+
+
+    public function shop(Request $request, $id)
+    {
+        $sale = Sale::findOrFail($id);
+
+        if ($sale->isSold) {
+            return redirect()->route('sales.index')->with('success', 'This product has already been sold.');
+        }
+
+        $sale->update([
+            'isSold' => true
+        ]);
+
+        return redirect()->route('sales.index')->with('success', 'Product purchased successfully.');
     }
 
     public function store(Request $request)
@@ -107,12 +121,13 @@ class SaleController extends Controller
     {
         $sale = Sale::with('category', 'user', 'images', 'purchases')->findOrFail($id);
 
-        // Si el producto está vendido y el usuario no es ni el vendedor ni el comprador
-        if ($sale->isSold && 
-            Auth::id() != $sale->user_id && 
-            !$sale->purchases->where('user_id', Auth::id())->count()) {
+        if (
+            $sale->isSold &&
+            Auth::id() != $sale->user_id &&
+            !$sale->purchases->where('user_id', Auth::id())->count()
+        ) {
             return redirect()->route('sales.index')
-                            ->with('error', 'Este producto ya no está disponible.');
+                ->with('error', 'Este producto ya no está disponible.');
         }
 
         return view('sales.show', compact('sale'));
