@@ -42,11 +42,11 @@ class SaleController extends Controller
         $sale = Sale::findOrFail($id);
 
         if ($sale->isSold) {
-            return back()->with('error', 'Este producto ya ha sido vendido.');
+            return back()->with('error', 'Already sold.');
         }
 
         if ($sale->user_id === Auth::id()) {
-            return back()->with('error', 'No puedes comprar tu propio producto.');
+            return back()->with('error', 'You cannot purchase your own product.');
         }
 
         $sale->update(['isSold' => true]);
@@ -58,7 +58,7 @@ class SaleController extends Controller
         ]);
 
         return redirect()->route('sales.show', $sale->id)
-            ->with('success', 'Producto comprado correctamente');
+            ->with('success', 'Product purchased successfully.');
     }
 
     public function create()
@@ -68,9 +68,10 @@ class SaleController extends Controller
     }
 
 
-    public function shop(Request $request, $id)
+    public function shop(Request $request)
     {
-        $sale = Sale::findOrFail($id);
+
+        $sale = Sale::findOrFail($request->sale);
 
         if ($sale->isSold) {
             return redirect()->route('sales.index')->with('success', 'This product has already been sold.');
@@ -85,7 +86,7 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        $maxImages = Setting::where('name', 'maxImages')->value('maxImages') ?? 5;
+        $maxImages = Setting::where('name', 'maxImages')->value('maxImages') ?? 4;
         $request->validate([
             'product' => 'required|string|max:255',
             'description' => 'required|string',
@@ -114,7 +115,7 @@ class SaleController extends Controller
             }
         }
 
-        return redirect()->route('sales.index')->with('success', 'Anuncio creado exitosamente.');
+        return redirect()->route('sales.index')->with('success', 'Product created successfully.');
     }
 
     public function show($id)
@@ -127,7 +128,7 @@ class SaleController extends Controller
             !$sale->purchases->where('user_id', Auth::id())->count()
         ) {
             return redirect()->route('sales.index')
-                ->with('error', 'Este producto ya no está disponible.');
+                ->with('error', 'Not available anymore.');
         }
 
         return view('sales.show', compact('sale'));
@@ -170,13 +171,13 @@ class SaleController extends Controller
             }
         }
 
-        return redirect()->route('sales.index')->with('success', 'Anuncio actualizado.');
+        return redirect()->route('sales.index')->with('success', 'Product updated.');
     }
 
     public function destroy($id)
     {
         $sale = Sale::findOrFail($id);
         $sale->delete();
-        return redirect()->route('sales.index')->with('success', 'Anuncio eliminado.');
+        return redirect()->route('sales.index')->with('success', 'Product deleted.');
     }
 }

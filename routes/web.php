@@ -30,4 +30,4 @@ Route::resource('categories', CategoryController::class);
 Route::resource('settings', SettingController::class);
 Route::resource('images', ImageController::class);
 Route::get('sales/user/{user}', [SaleController::class, 'showUserSales'])->name('sales.user');
-Route::put('sales/{id}', [SaleController::class, 'shop'])->name('sales.shop');
+Route::put('sales/{sale}', [SaleController::class, 'shop'])->name('sales.shop');

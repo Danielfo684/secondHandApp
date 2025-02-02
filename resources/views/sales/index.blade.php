@@ -28,12 +28,33 @@
         @foreach($sales as $sale)
         <div class="col-md-5 mx-auto">
             <div class="card h-100 shadow-sm">
-                <div class="position-relative">
-                    @if($sale->images->isNotEmpty())
+                <div class="position-relative" style="height: 400px;">
+                    @if($sale->images->isNotEmpty() && $sale->images->count() == 1)
                     <img src="{{ asset('storage/' . $sale->images->first()->route) }}"
                         class="card-img-top"
                         style="height: 400px; object-fit: cover;"
                         alt="{{ $sale->product }}">
+                    @elseif($sale->images->count() > 1)
+                    <div id="carousel-{{ $sale->id }}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
+                        <div class="carousel-inner">
+                            @foreach($sale->images as $image)
+                            <div class="carousel-item @if ($loop->first) active @endif">
+                                <img src="{{ asset("storage/{$image->route}") }}"
+                                    class="d-block w-100"
+                                    style="height: 400px; object-fit: contain;"
+                                    alt="{{ $sale->product }}">
+                            </div>
+                            @endforeach
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ $sale->id }}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color: black;"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ $sale->id }}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true" style="background-color: black;"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
                     @else
                     <img src="{{ asset('images/basica.png') }}"
                         class="card-img-top"
@@ -63,48 +84,32 @@
                     </button>
 
                     @if(Auth::id() != $sale->user_id && !$sale->isSold)
-                <form action="{{ route('sales.shop', $sale->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <button type="submit" class="btn btn-danger w-100"
-                        onclick="return confirm('¿Are you sure you want to buy this product?')">
-                        <i class="fas fa-trash"></i> Buy Product
-                    </button>
-                </form>
-                @endif
+                    <form action="{{ route('sales.shop', $sale->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="btn btn-primary w-100"
+                            onclick="return confirm('¿Are you sure you want to buy this product?')">
+                            <i class="fas fa-trash"></i> Buy Product
+                        </button>
+                    </form>
+                    @endif
+                    @if (Auth::id() == $sale->user_id)
+                    <form action="{{ route('sales.destroy', $sale) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger w-100"
+                            onclick="return confirm('¿Are you sure you want to delete this product?')">
+                            <i class="fas fa-trash"></i> Delete Product
+                        </button>
+                    </form>
+                    @endif
+
                 </div>
-                
+
             </div>
         </div>
         @include('sales.show-modal', ['sale' => $sale])
         @endforeach
     </div>
-
-
-    @auth
-    <div class="modal fade" id="buyModal" tabindex="-1" aria-labelledby="buyModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="buyModalLabel">Confirmar Compra</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>¿Estás seguro de que deseas comprar "{{ $sale->product }}" por €{{ number_format($sale->price, 0, ',', '.') }}?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <form action="{{ route('sales.purchase', $sale->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-primary">Confirmar Compra</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endauth
-
-
-
 </div>
 @endsection

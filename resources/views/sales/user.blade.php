@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="d-flex  gap-3 align-items-center mb-4">
-     
+
         <a href="{{ route('sales.create') }}" class="btn btn-info">
             <i class="fas fa-plus"></i> New Product
         </a>
@@ -48,17 +48,17 @@
                     <h6 class="text-info">Price: {{ number_format($sale->price, 0, ',', '.') }}€</h6>
                     <span class=""> Category: {{ $sale->category->name }}</span> <br>
                     <span class=""> Seller: {{ $sale->user->name }}</span>
-                    
+
                 </div>
                 <div class="m-3">
-                <form action="{{ route('sales.destroy', $sale->id) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger w-100" 
-                                            onclick="return confirm('¿Are you sure you want to delete this product?')">
-                                        <i class="fas fa-trash"></i> Delete Product
-                                    </button>
-                                </form>
+                    <form action="{{ route('sales.destroy', $sale->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger w-100"
+                            onclick="return confirm('¿Are you sure you want to delete this product?')">
+                            <i class="fas fa-trash"></i> Delete Product
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
